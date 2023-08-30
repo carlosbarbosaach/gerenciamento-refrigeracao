@@ -8,6 +8,10 @@ import Relatorio from './Pages/Relatorio/Relatorio'
 import Suporte from './Pages/Suporte/Suporte'
 import Sair from './Pages/Sair/Sair'
 import Header from './Components/Header'
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/primereact.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 import './Style.css'
 
 function App() {

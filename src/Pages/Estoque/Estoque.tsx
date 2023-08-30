@@ -34,6 +34,8 @@ const Estoque = () => {
       .then((data) => setProducts(data));
   }, []);
 
+  console.log(products)
+
   const formatCurrency = (value: number): string => {
     return value.toLocaleString('pt-BR', { style: "currency", currency: "BRL" });
   };
@@ -56,13 +58,13 @@ const Estoque = () => {
 
   const getSeverity = (product: Product) => {
     switch (product.inventoryStatus) {
-      case 'INSTOCK':
+      case 'Em estoque':
         return 'success';
 
-      case 'LOWSTOCK':
+      case 'Baixo estoque':
         return 'warning';
 
-      case 'OUTOFSTOCK':
+      case 'Fora de estoque':
         return 'danger';
 
       default:
@@ -72,11 +74,22 @@ const Estoque = () => {
 
   const header = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-      <span className="text-xl text-900 font-bold">Products</span>
-      <Button icon="pi pi-refresh" rounded raised />
+      <span className="text-xl text-900 font-bold">Produtos</span>
     </div>
   );
-  const footer = `In total there are ${products ? products.length : 0} products.`;
+  const footer = `No total são ${products ? products.length : 0} produtos.`;
+
+  const quantityBodyTemplate = (product: Product) => {
+    const quantityClassName = product.quantity === 0 ? 'product-zero-quantity' : '';
+    return <span className={quantityClassName}>{product.quantity}</span>;
+  };
+
+  const customRowClassName = (rowData: Product) => {
+    if (rowData.quantity === 0) {
+      return 'product-zero-quantity';
+    }
+    return '';
+  };
 
   return (
     <section>
@@ -91,12 +104,21 @@ const Estoque = () => {
         </div>
       </div>
       <div className="card">
-        <DataTable value={products} header={header} footer={footer} tableStyle={{ minWidth: '60rem' }}>
-          <Column field="name" header="Name"></Column>
-          <Column header="Image" body={imageBodyTemplate}></Column>
-          <Column field="price" header="Price" body={priceBodyTemplate}></Column>
-          <Column field="category" header="Category"></Column>
-          <Column field="rating" header="Reviews" body={ratingBodyTemplate}></Column>
+        <DataTable
+          value={products}
+          header={header}
+          footer={footer}
+          paginator rows={10}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          rowClassName={customRowClassName}
+          tableStyle={{ minWidth: '60rem' }}>
+          <Column field="id" header="ID"></Column>
+          <Column field="name" header="Produto"></Column>
+          <Column header="Imagem" body={imageBodyTemplate}></Column>
+          <Column field="price" header="Preço" body={priceBodyTemplate}></Column>
+          <Column field="category" header="Categoria"></Column>
+          <Column field="quantity" header="Quantidade" body={quantityBodyTemplate}></Column>
+          <Column field="rating" header="Avaliações" body={ratingBodyTemplate}></Column>
           <Column header="Status" body={statusBodyTemplate}></Column>
         </DataTable>
       </div>
