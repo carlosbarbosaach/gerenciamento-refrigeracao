@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { ProductService } from '../../../Data/ProductService'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { Button } from 'primereact/button';
 import 'primeicons/primeicons.css';
 import { Rating } from 'primereact/rating';
 import { Tag } from 'primereact/tag';
@@ -77,7 +76,7 @@ const Estoque = () => {
       <span className="text-xl text-900 font-bold">Produtos</span>
     </div>
   );
-  const footer = `No total são ${products ? products.length : 0} produtos.`;
+  const footer = `Total de produtos cadastrados: ${products ? products.length : 0}`;
 
   const quantityBodyTemplate = (product: Product) => {
     const quantityClassName = product.quantity === 0 ? 'product-zero-quantity' : '';
@@ -85,8 +84,9 @@ const Estoque = () => {
   };
 
   const customRowClassName = (rowData: Product) => {
-    if (rowData.quantity === 0) {
-      return 'product-zero-quantity';
+    const statusSeverity = getSeverity(rowData);
+    if (statusSeverity) {
+      return `product-${statusSeverity}-status`;
     }
     return '';
   };

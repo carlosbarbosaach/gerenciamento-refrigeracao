@@ -82,7 +82,7 @@ export const ProductService = {
                 price: 32,
                 category: 'Accessories',
                 quantity: 5,
-                inventoryStatus: 'Fora de estoque',
+                inventoryStatus: 'Baixo estoque',
                 rating: 3
             },
             {
