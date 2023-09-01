@@ -13,6 +13,7 @@ const style: React.CSSProperties = {
   lineHeight: "1.25rem",
   margin: "0.75rem",
   minWidth: "185px",
+  maxWidth: "200px",
   padding: "0 1rem 0 1rem",
   transition: "0.3s",
   cursor: "pointer",

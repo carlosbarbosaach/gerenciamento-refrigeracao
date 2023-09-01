@@ -1,13 +1,40 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { ProductService } from '../../Data/ProductService';
 
-const SelectCategoria = () => {
-  return (
-    <select className='styleSelect' name="selectCategorias" id="selectCategorias">
-      <option value="TodasCategorias">Todas as categorias</option>
-      <option value="TodasCategorias">Geladeira</option>
-      <option value="TodasCategorias">Freezer</option>
-    </select>
-  )
+interface SelectCategoriaProps {
+  onSelectCategoria: (categoria: string) => void;
 }
 
-export default SelectCategoria
+const SelectCategoria: React.FC<SelectCategoriaProps> = ({ onSelectCategoria }) => {
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    const categoryList = ProductService.getCategories();
+    setCategories(categoryList);
+  }, []);
+
+  const handleCategoriaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCategoria = event.target.value;
+    onSelectCategoria(selectedCategoria);
+  };
+
+  return (
+    <div>
+      <select
+        className="styleSelect"
+        name="selectCategorias"
+        id="selectCategorias"
+        onChange={handleCategoriaChange}
+      >
+        <option value="TodasCategorias">Todas as categorias</option>
+        {categories.map((category) => (
+          <option key={category} value={category}>
+            {category}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+export default SelectCategoria;

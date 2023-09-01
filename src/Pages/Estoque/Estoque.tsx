@@ -1,13 +1,11 @@
 import InputEstoque from '../../Components/InputEstoque'
 import SelectCategoria from '../../Components/SelectCategoria'
-import SelectMarca from '../../Components/SelectMarca'
 import ButtonPesquisar from '../../Components/ButtonPesquisar'
 import { useEffect, useState } from 'react'
 import { ProductService } from '../../../Data/ProductService'
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import 'primeicons/primeicons.css';
-import { Rating } from 'primereact/rating';
 import { Tag } from 'primereact/tag';
 
 import '../../Style.css'
@@ -27,6 +25,8 @@ interface Product {
 
 const Estoque = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string>('TodasCategorias');
+
 
   useEffect(() => {
     ProductService.getProductsMini()
@@ -34,6 +34,14 @@ const Estoque = () => {
   }, []);
 
   console.log(products)
+
+  const handleCategoriaSelect = (categoria: string) => {
+    setCategoriaSelecionada(categoria);
+  };
+
+  const filteredProducts = categoriaSelecionada === 'TodasCategorias'
+    ? products // Se 'TodasCategorias' estiver selecionada, não filtramos
+    : products.filter(product => product.category === categoriaSelecionada);
 
   const formatCurrency = (value: number): string => {
     return value.toLocaleString('pt-BR', { style: "currency", currency: "BRL" });
@@ -45,10 +53,6 @@ const Estoque = () => {
 
   const priceBodyTemplate = (product: Product) => {
     return formatCurrency(product.price);
-  };
-
-  const ratingBodyTemplate = (product: Product) => {
-    return <Rating value={product.rating} readOnly cancel={false} />;
   };
 
   const statusBodyTemplate = (product: Product) => {
@@ -97,15 +101,14 @@ const Estoque = () => {
         <div className='box flex styleEstoque'>
           <InputEstoque />
           <div className='styleSelectBtn'>
-            <SelectCategoria />
-            <SelectMarca />
+            <SelectCategoria onSelectCategoria={handleCategoriaSelect} />
             <ButtonPesquisar />
           </div>
         </div>
       </div>
       <div className="card">
         <DataTable
-          value={products}
+          value={filteredProducts}
           header={header}
           footer={footer}
           paginator rows={10}
@@ -117,8 +120,8 @@ const Estoque = () => {
           <Column header="Imagem" body={imageBodyTemplate}></Column>
           <Column field="price" header="Preço" body={priceBodyTemplate}></Column>
           <Column field="category" header="Categoria"></Column>
+          <Column field="brand" header="Marca"></Column>
           <Column field="quantity" header="Quantidade" body={quantityBodyTemplate}></Column>
-          <Column field="rating" header="Avaliações" body={ratingBodyTemplate}></Column>
           <Column header="Status" body={statusBodyTemplate}></Column>
         </DataTable>
       </div>
