@@ -9,6 +9,7 @@ import 'primeicons/primeicons.css';
 import { Tag } from 'primereact/tag';
 
 import '../../Style.css'
+import StockNotification from '../../Components/StockNotification'
 
 interface Product {
   id: string;
@@ -26,6 +27,7 @@ interface Product {
 const Estoque = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string>('TodasCategorias');
+  const [showLowStockNotification, setShowLowStockNotification] = useState(false);
 
 
   useEffect(() => {
@@ -35,12 +37,22 @@ const Estoque = () => {
 
   console.log(products)
 
+  useEffect(() => {
+    const hasLowStockProducts = products.some(product => product.quantity < 5);
+
+    if (hasLowStockProducts) {
+      setShowLowStockNotification(true);
+    } else {
+      setShowLowStockNotification(false);
+    }
+  }, [products]);
+
   const handleCategoriaSelect = (categoria: string) => {
     setCategoriaSelecionada(categoria);
   };
 
   const filteredProducts = categoriaSelecionada === 'TodasCategorias'
-    ? products // Se 'TodasCategorias' estiver selecionada, não filtramos
+    ? products
     : products.filter(product => product.category === categoriaSelecionada);
 
   const formatCurrency = (value: number): string => {
@@ -97,6 +109,7 @@ const Estoque = () => {
 
   return (
     <section>
+      <StockNotification products={products} />
       <div className='flex mb'>
         <div className='box flex styleEstoque'>
           <InputEstoque />
