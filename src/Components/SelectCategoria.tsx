@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ProductService } from '../../Data/ProductService';
 
 interface SelectCategoriaProps {
   onSelectCategoria: (categoria: string) => void;
@@ -8,10 +7,6 @@ interface SelectCategoriaProps {
 const SelectCategoria: React.FC<SelectCategoriaProps> = ({ onSelectCategoria }) => {
   const [categories, setCategories] = useState<string[]>([]);
 
-  useEffect(() => {
-    const categoryList = ProductService.getCategories();
-    setCategories(categoryList);
-  }, []);
 
   const handleCategoriaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCategoria = event.target.value;
