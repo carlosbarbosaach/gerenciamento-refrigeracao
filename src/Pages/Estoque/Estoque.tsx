@@ -1,49 +1,67 @@
-import { useEffect, useState } from 'react';
-import { useCustomApi } from '../../Hooks/useCustomApi';
-import { TypesProduto } from '../../types/types'
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import React, { useState, useEffect } from "react";
+import styles from "../../Styles/CadastroProduto.scss";
 
-import 'primeicons/primeicons.css';
-import '../../Style.css'
+interface Product {
+  id: number;
+  nome: string;
+  descricao: string;
+  preco: number;
+  quantidade: number;
+  categoria: {
+    id: number;
+    nome?: string;
+  };
+  idImagem?: string;
+}
 
-const Estoque = () => {
-  const [data, setData] = useState<TypesProduto[]>([]);
-  const { loading, error, getProduto } = useCustomApi<{ produtos: TypesProduto[] }>('api/produto');
+interface ImageDetails {
+  id: number;
+}
+
+const Estoque: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [imageDetails, setImageDetails] = useState<ImageDetails | null>(null);
 
   useEffect(() => {
-    getProduto()
-      .then((responseData) => {
-        setData(responseData.produtos);
+    fetch("http://45.235.53.125:8080/api/produto")
+      .then((response) => response.json())
+      .then((data) => {
+        setProducts(data);
       })
-      .catch((error) => console.log(error))
-  }, [getProduto])
+      .catch((error) => {
+        console.error("Erro ao obter os produtos:", error);
+      });
+  }, []);
 
-  if (loading) {
-    return <div>Carregando..................</div>;
-  }
-
-  if (error) {
-    return <div>Erro: {error}</div>;
-  }
+  useEffect(() => {
+    if (products.length > 0) {
+      const imageId = products[0].idImagem;
+      if (imageId) {
+        fetch(`http://45.235.53.125:8080/api/imagem/${imageId}`)
+          .then((response) => response.json())
+          .then((data: ImageDetails) => {
+            setImageDetails(data);
+          })
+          .catch((error) => {
+            console.error("Erro ao obter os detalhes da imagem:", error);
+          });
+      }
+    }
+  }, [products]);
 
   return (
-    <div>
-      {data && data.map((produto: TypesProduto) => (
-        <div key={produto.id}>
-          <div>
-            <h2>Detalhes do Produto</h2>
-            <p>Nome: {produto.nome}</p>
-            <p>Descrição: {produto.descricao}</p>
-            <p>Preço: R$ {produto.preco.toFixed(2)}</p>
-            <p>Quantidade: {produto.quantidade}</p>
-            <p>Categoria: {produto.categoria.nome}</p>
-            {/* Você pode adicionar mais campos conforme necessário */}
-          </div>
-          {/* Renderize os dados do produto aqui */}
-        </div>
-
-      ))}
+    <div className="productList">
+      <h2>Lista de Produtos</h2>
+      <ul>
+        {products.map((product: Product) => (
+          <li key={product.id}>
+            <p>{product.nome}</p>
+            <p>{product.descricao}</p>
+            <p>{product.preco}</p>
+            <p>{product.quantidade}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

@@ -1,13 +1,11 @@
-import React from "react";
-import CadastroProduto from "./CadastroProduto";
-import CadastroCategoria from "./CadastroCategoria";
+import AddProduct from "./AddProduct";
 
 const CadastroGeral = () => {
   return (
     <>
       <div className="flex">
         <div className="box mb">
-          <CadastroProduto />
+          <AddProduct />
         </div>
       </div>
     </>
